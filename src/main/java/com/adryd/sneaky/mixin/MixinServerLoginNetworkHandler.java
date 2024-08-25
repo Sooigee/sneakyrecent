@@ -30,7 +30,7 @@ class MixinServerLoginNetworkHandler {
     @Nullable
     private GameProfile profile;
 
-    @Inject(method = "tickVerify", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler;sendSuccessPacket(Lcom/mojang/authlib/GameProfile;)V", shift = At.Shift.AFTER))
+    @Inject(method = "tickVerify", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;disconnectDuplicateLogins(Lcom/mojang/authlib/GameProfile;)Z"))
     private void atSuccessfulJoin(CallbackInfo ci) {
         IPList.INSTANCE.addToIPList(this.connection.getAddress());
     }
