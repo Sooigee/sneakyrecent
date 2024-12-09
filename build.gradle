@@ -1,0 +1,95 @@
+plugins {
+	id 'fabric-loom' version '1.8.6'
+	id 'org.ajoberstar.grgit' version '4.1.1'
+	id 'maven-publish'
+}
+
+version = "${project.mod_version}${getVersionMetadata()}"
+group = project.maven_group
+
+repositories {
+	maven {
+		name = 'Fabric'
+		url = 'https://maven.fabricmc.net/'
+	}
+	mavenCentral()
+}
+
+dependencies {
+	// Minecraft version
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+	// Yarn mappings
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+
+	// Fabric Loader version
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+base {
+	archivesName = "${project.archives_base_name}-mc${project.minecraft_version}"
+}
+
+processResources {
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	// Minecraft 1.21.4 uses Java 21.
+	it.options.release = 21
+	it.options.encoding = "UTF-8"
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${base.archivesName.get()}" }
+	}
+}
+
+// Configure the Maven publication
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+	repositories {
+		// Add repositories to publish to here.
+	}
+}
+
+def getVersionMetadata() {
+	def release = System.getenv("BUILD_RELEASE") == "true"
+	def build_ci_branch = System.getenv("CI_COMMIT_BRANCH")
+
+	if (release) {
+		return ""
+	}
+
+	if (grgit != null && grgit.status().isClean()) {
+		// 8 chars long to match GitLab's commit IDs
+		def id = grgit.head().id[0..7]
+		def branch = grgit.branch.current().name
+
+		if (branch == "main" || build_ci_branch == "main") {
+			return "+" + id
+		}
+
+		return "+" + branch + "." + id
+	}
+
+	return "+SNAPSHOT"
+}
