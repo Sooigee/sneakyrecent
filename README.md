@@ -1,4 +1,22 @@
-# Sneaky
+# Sneaky (Updated)
+
+This is an updated version of the original [Sneaky Server](https://github.com/adryd325/sneaky) mod by [adryd325](https://github.com/adryd325), updated to work with Minecraft 1.21.4.
+
+## Changes
+- Updated to Minecraft 1.21.4
+- Updated dependencies and build tools
+- Fixed compatibility issues with the latest Fabric Loader and API
+
+## Credits
+All original work was done by [adryd325](https://github.com/adryd325). This fork is maintained by [Sooigee](https://github.com/Sooigee).
+
+## License
+This project remains under the original license: [MIT License](LICENSE).
+
+## Disclaimer
+This fork is unofficial and is not associated with the original author. 
+
+------------------------------------------------------------------------
 
 Sneaky anonymises your server from server scanners like Copenheimer, Shodan or ServerSeeker by only showing server info to players who have previously joined.
 
